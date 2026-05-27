@@ -314,55 +314,9 @@
   root.querySelector('[data-confirm]').addEventListener('click', function(){
     if(!state.date || !state.slot || !state.type) return;
     var btn = root.querySelector('[data-confirm]');
-    var err = root.querySelector('[data-err]');
-    err.classList.remove('is-on'); err.textContent = '';
-
-    var dateStr = state.date.toLocaleDateString(undefined,{weekday:'long', year:'numeric', month:'long', day:'numeric'});
-    var props = {
-      'Booking Type': state.type.title,
-      'Pickup Date': dateStr,
-      'Pickup Window': state.slot
-    };
-
     btn.disabled = true;
     btn.textContent = 'Redirecting…';
-
-    // Failsafe: if nothing has navigated within 3s, force-go to /checkout
-    setTimeout(function(){ window.location.href = '/checkout'; }, 3000);
-
-    // No product attached → just go straight to checkout
-    if(!state.type.variantId){
-      window.location.href = '/checkout';
-      return;
-    }
-
-    // Reliable Shopify pattern: standard form POST to /cart/add with return_to=/checkout.
-    // This adds the variant AND redirects to checkout in a single round-trip — no empty-cart bounce.
-    var form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/cart/add';
-    form.style.display = 'none';
-
-    function addInput(name, value){
-      var input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      input.value = value;
-      form.appendChild(input);
-    }
-
-    addInput('id', state.type.variantId);
-    addInput('quantity', '1');
-    if(state.type.sellingPlan){
-      addInput('selling_plan', state.type.sellingPlan);
-    }
-    Object.keys(props).forEach(function(k){
-      addInput('properties[' + k + ']', props[k]);
-    });
-    addInput('return_to', '/checkout');
-
-    document.body.appendChild(form);
-    form.submit();
+    window.location.href = '/checkout';
   });
 })();
 </script>
