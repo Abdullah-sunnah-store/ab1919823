@@ -114,7 +114,8 @@
   #sp-{{ uid }} [data-step="2"]{ display:none; }
   #sp-{{ uid }}[data-active="2"] [data-step="1"]{ display:none; }
   #sp-{{ uid }}[data-active="2"] [data-step="2"]{ display:block; }
-  #sp-{{ uid }} .sp-anchor{ position: relative; top: -80px; display:block; height:0; width:0; overflow:hidden; }
+  #sp-{{ uid }} .sp-anchor{ display:block; height:0; width:0; overflow:hidden; scroll-margin-top: 100px; }
+  #sp-{{ uid }}{ scroll-margin-top: 100px; }
 </style>
 
 <section id="sp-{{ uid }}" data-active="1">
@@ -221,8 +222,6 @@
   var DEFAULT_BULLETS = {{ section.settings.default_bullets | default: '' | json }}.split('|').map(function(s){ return s.trim(); }).filter(Boolean);
   var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   var DOW = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-  var CHECKOUT_URL = {{ section.settings.checkout_url | default: '/cart' | json }};
-
   var today = new Date(); today.setHours(0,0,0,0);
   var state = { type:null, year: today.getFullYear(), month: today.getMonth(), date:null, slot:null };
 
@@ -325,13 +324,11 @@
       'Pickup Window': state.slot
     };
 
-    var destination = (CHECKOUT_URL && CHECKOUT_URL !== '/cart') ? CHECKOUT_URL : '/checkout';
-
     btn.disabled = true;
     var originalLabel = btn.textContent;
     btn.textContent = 'Redirecting…';
 
-    function goCheckout(){ window.location.href = destination; }
+    function goCheckout(){ window.location.href = '/checkout'; }
 
     // No product attached → just go straight to checkout
     if(!state.type.variantId){

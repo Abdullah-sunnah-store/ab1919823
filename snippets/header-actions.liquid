@@ -70,9 +70,32 @@
       href="{{ schedule_href }}"
       class="header-actions__schedule-cta"
       data-testid="header-schedule-cta"
+      data-schedule-cta
     >
       {{ section.settings.schedule_cta_text }}
     </a>
+    <script>
+      (function(){
+        document.querySelectorAll('[data-schedule-cta]').forEach(function(link){
+          link.addEventListener('click', function(e){
+            var href = link.getAttribute('href') || '';
+            var hashIndex = href.indexOf('#');
+            if(hashIndex < 0) return;
+            var id = href.slice(hashIndex + 1);
+            if(!id) return;
+            var target = document.getElementById(id);
+            if(!target) return;
+            var path = href.slice(0, hashIndex);
+            var here = window.location.pathname;
+            if(path === '' || path === here || path === '/' && here === '/'){
+              e.preventDefault();
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              history.replaceState(null, '', '#' + id);
+            }
+          });
+        });
+      })();
+    </script>
   {%- endif -%}
 
   {% if shop.customer_accounts_enabled %}
