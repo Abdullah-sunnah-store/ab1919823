@@ -1546,6 +1546,29 @@
     },
     {
       "type": "header",
+      "content": "Schedule CTA"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_schedule_cta",
+      "label": "Show Schedule button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "schedule_cta_text",
+      "label": "Button text",
+      "default": "Schedule",
+      "visible_if": "{{ section.settings.show_schedule_cta }}"
+    },
+    {
+      "type": "url",
+      "id": "schedule_cta_url",
+      "label": "Button link",
+      "visible_if": "{{ section.settings.show_schedule_cta }}"
+    },
+    {
+      "type": "header",
       "content": "t:content.colors"
     },
     {
