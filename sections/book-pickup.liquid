@@ -1,0 +1,486 @@
+{%- comment -%}
+  Schedule Pickup — fully dynamic Shopify section
+  Two-step flow:
+    Step 1: choose a booking type (cards = blocks of type "option")
+    Step 2: details panel + calendar + time-slot picker
+  Everything (colors, copy, pickup weekdays, time windows, blocks) is editable in the theme editor.
+{%- endcomment -%}
+
+{%- liquid
+  assign uid = section.id | replace: '_', '-'
+  assign primary    = section.settings.color_primary
+  assign primary_fg = section.settings.color_primary_fg
+  assign bg         = section.settings.color_bg
+  assign fg         = section.settings.color_fg
+  assign muted      = section.settings.color_muted
+  assign card       = section.settings.color_card
+  assign border     = section.settings.color_border
+  assign radius     = section.settings.card_radius
+  assign font       = section.settings.font_family
+
+  assign pickup_days_raw = section.settings.pickup_weekdays | default: '1,3,5'
+  assign pickup_days = pickup_days_raw | replace: ' ', ''
+
+  assign time_slots_raw = section.settings.time_slots | default: '8:00am – 11:00am|4:00pm – 7:00pm'
+-%}
+
+<style>
+  #sp-{{ uid }}{
+    --sp-bg: {{ bg }};
+    --sp-fg: {{ fg }};
+    --sp-muted: {{ muted }};
+    --sp-card: {{ card }};
+    --sp-border: {{ border }};
+    --sp-primary: {{ primary }};
+    --sp-primary-fg: {{ primary_fg }};
+    --sp-radius: {{ radius }}px;
+    background: var(--sp-bg);
+    color: var(--sp-fg);
+    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+    font-family: {{ font }}, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  #sp-{{ uid }} .sp-wrap{ max-width: 1100px; margin: 0 auto; }
+  #sp-{{ uid }} .sp-head{ text-align:center; margin-bottom: 40px; }
+  #sp-{{ uid }} .sp-head h2{ font-size: clamp(28px, 4vw, 44px); font-weight: 800; margin: 0 0 10px; letter-spacing:-0.02em;}
+  #sp-{{ uid }} .sp-head p{ color: var(--sp-muted); margin:0; font-size:16px;}
+
+  /* Step 1: booking type cards */
+  #sp-{{ uid }} .sp-step1{ max-width: 760px; margin: 0 auto; background: var(--sp-card); border:1px solid var(--sp-border); border-radius: var(--sp-radius); padding: 40px; }
+  #sp-{{ uid }} .sp-step1-head{ text-align:center; margin-bottom: 28px; }
+  #sp-{{ uid }} .sp-eyebrow{ font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--sp-primary); font-weight:700; margin:0 0 10px;}
+  #sp-{{ uid }} .sp-step1-head h3{ font-size:24px; font-weight:800; margin:0 0 6px;}
+  #sp-{{ uid }} .sp-step1-head .sp-sub{ color:var(--sp-muted); font-size:14px; margin:0;}
+  #sp-{{ uid }} .sp-options{ display:grid; gap:14px; grid-template-columns: repeat(auto-fit,minmax(240px,1fr));}
+  #sp-{{ uid }} .sp-option{ text-align:left; padding:24px; border-radius: calc(var(--sp-radius) - 4px); border:2px solid var(--sp-border); background: transparent; color:inherit; cursor:pointer; position:relative; transition: all .2s; font-family:inherit;}
+  #sp-{{ uid }} .sp-option:hover{ border-color: var(--sp-primary); background: color-mix(in srgb, var(--sp-primary) 5%, transparent);}
+  #sp-{{ uid }} .sp-option[data-featured="true"]{ border-color: var(--sp-primary); background: color-mix(in srgb, var(--sp-primary) 10%, transparent);}
+  #sp-{{ uid }} .sp-badge{ position:absolute; top:-12px; right:16px; background:var(--sp-primary); color:var(--sp-primary-fg); font-size:10px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; padding:4px 8px; border-radius:4px;}
+  #sp-{{ uid }} .sp-option-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;}
+  #sp-{{ uid }} .sp-icon{ width:40px; height:40px; border-radius:50%; display:grid; place-items:center; background: color-mix(in srgb, var(--sp-primary) 15%, transparent); color:var(--sp-primary); font-weight:800;}
+  #sp-{{ uid }} .sp-option[data-featured="true"] .sp-icon{ background:var(--sp-primary); color:var(--sp-primary-fg);}
+  #sp-{{ uid }} .sp-tag{ font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--sp-muted); font-weight:700;}
+  #sp-{{ uid }} .sp-option[data-featured="true"] .sp-tag{ color:var(--sp-primary);}
+  #sp-{{ uid }} .sp-option h4{ font-size:20px; font-weight:800; margin:0 0 8px;}
+  #sp-{{ uid }} .sp-option p{ color:var(--sp-muted); font-size:14px; line-height:1.6; margin:0 0 16px;}
+  #sp-{{ uid }} .sp-cta{ color:var(--sp-primary); font-weight:700; font-size:14px;}
+
+  /* Step 2: details + calendar */
+  #sp-{{ uid }} .sp-step2{ max-width: 1100px; margin: 0 auto; background: var(--sp-card); border:1px solid var(--sp-border); border-radius: var(--sp-radius); overflow:hidden; display:grid; grid-template-columns: 1fr;}
+  @media (min-width: 880px){ #sp-{{ uid }} .sp-step2{ grid-template-columns: 1fr 1fr; } }
+  #sp-{{ uid }} .sp-details{ padding: 40px; border-bottom:1px solid var(--sp-border);}
+  @media (min-width: 880px){ #sp-{{ uid }} .sp-details{ border-bottom:0; border-right:1px solid var(--sp-border);} }
+  #sp-{{ uid }} .sp-back{ background:none; border:0; color:var(--sp-muted); text-transform:uppercase; letter-spacing:.1em; font-size:11px; cursor:pointer; margin-bottom: 24px; padding:0; font-family:inherit;}
+  #sp-{{ uid }} .sp-back:hover{ color:var(--sp-primary); }
+  #sp-{{ uid }} .sp-dot{ width:48px; height:48px; border-radius:50%; background: color-mix(in srgb, var(--sp-primary) 20%, transparent); display:grid; place-items:center; margin-bottom:24px;}
+  #sp-{{ uid }} .sp-dot::after{ content:""; width:16px; height:16px; border-radius:50%; background:var(--sp-primary);}
+  #sp-{{ uid }} .sp-details h3{ font-size:28px; font-weight:800; margin:0 0 8px;}
+  #sp-{{ uid }} .sp-meta{ display:flex; align-items:center; gap:8px; color:var(--sp-muted); font-size:14px; margin-bottom:24px;}
+  #sp-{{ uid }} .sp-meta i{ display:inline-block; width:4px; height:4px; border-radius:50%; background:var(--sp-muted); opacity:.6; font-style:normal;}
+  #sp-{{ uid }} .sp-desc{ color:var(--sp-muted); line-height:1.7; margin:0 0 20px;}
+  #sp-{{ uid }} .sp-bullets{ list-style:none; padding:0; margin:0; display:grid; gap:10px;}
+  #sp-{{ uid }} .sp-bullets li{ color:var(--sp-muted); font-size:14px; display:flex; gap:10px;}
+  #sp-{{ uid }} .sp-bullets li::before{ content:"→"; color:var(--sp-primary);}
+
+  #sp-{{ uid }} .sp-cal{ padding: 40px;}
+  #sp-{{ uid }} .sp-cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;}
+  #sp-{{ uid }} .sp-cal-head h4{ font-size:18px; font-weight:800; margin:0;}
+  #sp-{{ uid }} .sp-nav{ display:flex; align-items:center; gap:4px;}
+  #sp-{{ uid }} .sp-nav button{ width:32px; height:32px; display:grid; place-items:center; border-radius:6px; background:none; border:0; color:var(--sp-muted); cursor:pointer; font-size:18px;}
+  #sp-{{ uid }} .sp-nav button:hover{ background: color-mix(in srgb, var(--sp-fg) 8%, transparent);}
+  #sp-{{ uid }} .sp-nav span{ font-size:14px; color:var(--sp-muted); width:130px; text-align:center;}
+  #sp-{{ uid }} .sp-grid{ display:grid; grid-template-columns: repeat(7,1fr); gap:8px; margin-bottom:24px;}
+  #sp-{{ uid }} .sp-dow{ font-size:10px; text-transform:uppercase; letter-spacing:.1em; text-align:center; color:var(--sp-muted); opacity:.6; font-weight:800;}
+  #sp-{{ uid }} .sp-day{ aspect-ratio:1; display:grid; place-items:center; border-radius:50%; font-size:14px; font-weight:500; background:none; border:0; cursor:pointer; font-family:inherit; color:inherit;}
+  #sp-{{ uid }} .sp-day[data-state="empty"]{ visibility:hidden;}
+  #sp-{{ uid }} .sp-day[data-state="off"]{ color: color-mix(in srgb, var(--sp-fg) 15%, transparent); cursor:not-allowed;}
+  #sp-{{ uid }} .sp-day[data-state="available"]{ background: color-mix(in srgb, var(--sp-primary) 10%, transparent); color: var(--sp-primary);}
+  #sp-{{ uid }} .sp-day[data-state="available"]:hover{ background: var(--sp-primary); color: var(--sp-primary-fg);}
+  #sp-{{ uid }} .sp-day[data-state="selected"]{ background: var(--sp-primary); color: var(--sp-primary-fg);}
+
+  #sp-{{ uid }} .sp-slots{ display:none; }
+  #sp-{{ uid }} .sp-slots.is-open{ display:block; }
+  #sp-{{ uid }} .sp-slots-date{ font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--sp-muted); margin-bottom:12px;}
+  #sp-{{ uid }} .sp-slot{ width:100%; padding:12px; border-radius:6px; border:1px solid color-mix(in srgb, var(--sp-primary) 30%, transparent); background:none; color:var(--sp-primary); font-weight:600; font-size:14px; cursor:pointer; margin-bottom:8px; font-family:inherit;}
+  #sp-{{ uid }} .sp-slot:hover{ border-color:var(--sp-primary);}
+  #sp-{{ uid }} .sp-slot.is-selected{ background:var(--sp-primary); color:var(--sp-primary-fg); border-color:var(--sp-primary);}
+  #sp-{{ uid }} .sp-confirm{ display:none; width:100%; margin-top:12px; padding:14px; border-radius:6px; background:var(--sp-primary); color:var(--sp-primary-fg); border:0; font-weight:800; font-size:14px; cursor:pointer; font-family:inherit;}
+  #sp-{{ uid }} .sp-confirm.is-ready{ display:block;}
+  #sp-{{ uid }} .sp-confirm:hover{ filter: brightness(1.1);}
+  #sp-{{ uid }} .sp-confirm[disabled]{ opacity:.6; cursor:wait;}
+  #sp-{{ uid }} .sp-price{ color:var(--sp-fg); font-size:14px; margin:0 0 12px;}
+  #sp-{{ uid }} .sp-err{ color:#ef4444; font-size:13px; margin-top:8px; display:none;}
+  #sp-{{ uid }} .sp-err.is-on{ display:block;}
+
+  #sp-{{ uid }} [data-step="2"]{ display:none; }
+  #sp-{{ uid }}[data-active="2"] [data-step="1"]{ display:none; }
+  #sp-{{ uid }}[data-active="2"] [data-step="2"]{ display:block; }
+</style>
+
+<section id="sp-{{ uid }}" data-active="1">
+  <div class="sp-wrap">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="sp-head">
+        {%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
+        {%- if section.settings.subheading != blank -%}<p>{{ section.settings.subheading }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} STEP 1 {%- endcomment -%}
+    <div data-step="1">
+      <div class="sp-step1">
+        <div class="sp-step1-head">
+          {%- if section.settings.step1_eyebrow != blank -%}<p class="sp-eyebrow">{{ section.settings.step1_eyebrow }}</p>{%- endif -%}
+          <h3>{{ section.settings.step1_title }}</h3>
+          {%- if section.settings.step1_sub != blank -%}<p class="sp-sub">{{ section.settings.step1_sub }}</p>{%- endif -%}
+        </div>
+        <div class="sp-options">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'option' -%}
+              {%- liquid
+                assign opt_product = block.settings.product
+                assign opt_variant_id = ''
+                assign opt_price = ''
+                if opt_product != blank and opt_product.id
+                  assign opt_variant = opt_product.selected_or_first_available_variant
+                  assign opt_variant_id = opt_variant.id
+                  assign opt_price = opt_variant.price | money
+                endif
+              -%}
+              <button type="button" class="sp-option"
+                data-featured="{{ block.settings.featured }}"
+                data-option-id="{{ block.id }}"
+                data-title="{{ block.settings.title | escape }}"
+                data-description="{{ block.settings.detail_desc | escape }}"
+                data-variant-id="{{ opt_variant_id }}"
+                data-price="{{ opt_price | escape }}"
+                data-selling-plan="{{ block.settings.selling_plan_id | default: '' }}"
+                {%- if block.settings.bullets != blank -%} data-bullets="{{ block.settings.bullets | escape }}"{%- endif -%}
+                {{ block.shopify_attributes }}>
+                {%- if block.settings.badge != blank -%}<span class="sp-badge">{{ block.settings.badge }}</span>{%- endif -%}
+                <div class="sp-option-top">
+                  <span class="sp-icon">{{ block.settings.icon | default: '1' }}</span>
+                  {%- if block.settings.tag != blank -%}<span class="sp-tag">{{ block.settings.tag }}</span>{%- endif -%}
+                </div>
+                <h4>{{ block.settings.title }}</h4>
+                {%- if block.settings.description != blank -%}<p>{{ block.settings.description }}</p>{%- endif -%}
+                {%- if opt_price != blank -%}<p class="sp-price"><strong>{{ opt_price }}</strong></p>{%- endif -%}
+                {%- if block.settings.cta != blank -%}<span class="sp-cta">{{ block.settings.cta }} →</span>{%- endif -%}
+              </button>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%} STEP 2 {%- endcomment -%}
+    <div data-step="2">
+      <div class="sp-step2">
+        <div class="sp-details">
+          <button type="button" class="sp-back" data-back>← {{ section.settings.back_label | default: 'Change booking type' }}</button>
+          <div class="sp-dot"></div>
+          <h3 data-detail-title></h3>
+          <div class="sp-meta">
+            <span>{{ section.settings.meta_days }}</span>
+            <i></i>
+            <span>{{ section.settings.meta_windows }}</span>
+          </div>
+          <p class="sp-desc" data-detail-desc></p>
+          <ul class="sp-bullets" data-detail-bullets></ul>
+        </div>
+        <div class="sp-cal">
+          <div class="sp-cal-head">
+            <h4>{{ section.settings.calendar_title | default: 'Select a Date & Time' }}</h4>
+            <div class="sp-nav">
+              <button type="button" data-prev aria-label="Previous month">‹</button>
+              <span data-month-label></span>
+              <button type="button" data-next aria-label="Next month">›</button>
+            </div>
+          </div>
+          <div class="sp-grid" data-calendar></div>
+          <div class="sp-slots" data-slots>
+            <div class="sp-slots-date" data-slot-date></div>
+            <div data-slot-list></div>
+            <button type="button" class="sp-confirm" data-confirm>{{ section.settings.confirm_label | default: 'Continue to Payment →' }}</button>
+            <p class="sp-err" data-err></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var root = document.getElementById('sp-{{ uid }}');
+  if(!root) return;
+
+  var PICKUP_DAYS = {{ pickup_days | json }}.split(',').map(function(n){ return parseInt(n,10); }).filter(function(n){return !isNaN(n);});
+  var TIME_SLOTS = {{ time_slots_raw | json }}.split('|').map(function(s){ return s.trim(); }).filter(Boolean);
+  var DEFAULT_BULLETS = {{ section.settings.default_bullets | default: '' | json }}.split('|').map(function(s){ return s.trim(); }).filter(Boolean);
+  var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var DOW = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  var CHECKOUT_URL = {{ section.settings.checkout_url | default: '/cart' | json }};
+
+  var today = new Date(); today.setHours(0,0,0,0);
+  var state = { type:null, year: today.getFullYear(), month: today.getMonth(), date:null, slot:null };
+
+  // Step 1 → Step 2
+  root.querySelectorAll('.sp-option').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      state.type = {
+        id: btn.dataset.optionId,
+        title: btn.dataset.title,
+        description: btn.dataset.description,
+        variantId: btn.dataset.variantId || '',
+        price: btn.dataset.price || '',
+        sellingPlan: btn.dataset.sellingPlan || '',
+        bullets: btn.dataset.bullets ? btn.dataset.bullets.split('|').map(function(s){return s.trim();}).filter(Boolean) : DEFAULT_BULLETS
+      };
+      root.querySelector('[data-detail-title]').textContent = state.type.title;
+      root.querySelector('[data-detail-desc]').textContent = state.type.description || '';
+      var bl = root.querySelector('[data-detail-bullets]');
+      bl.innerHTML = '';
+      state.type.bullets.forEach(function(b){ var li=document.createElement('li'); li.textContent=b; bl.appendChild(li); });
+      root.setAttribute('data-active','2');
+      render();
+    });
+  });
+
+  root.querySelector('[data-back]').addEventListener('click', function(){
+    root.setAttribute('data-active','1');
+    state.date = null; state.slot = null;
+  });
+
+  root.querySelector('[data-prev]').addEventListener('click', function(){
+    if(state.month===0){ state.month=11; state.year--; } else state.month--;
+    render();
+  });
+  root.querySelector('[data-next]').addEventListener('click', function(){
+    if(state.month===11){ state.month=0; state.year++; } else state.month++;
+    render();
+  });
+
+  function render(){
+    root.querySelector('[data-month-label]').textContent = MONTHS[state.month] + ' ' + state.year;
+    var grid = root.querySelector('[data-calendar]');
+    grid.innerHTML = '';
+    DOW.forEach(function(d){ var el=document.createElement('div'); el.className='sp-dow'; el.textContent=d; grid.appendChild(el); });
+    var first = new Date(state.year, state.month, 1);
+    var startWd = (first.getDay()+6)%7;
+    var days = new Date(state.year, state.month+1, 0).getDate();
+    for(var i=0;i<startWd;i++){ var e=document.createElement('div'); e.className='sp-day'; e.setAttribute('data-state','empty'); grid.appendChild(e); }
+    for(var d=1; d<=days; d++){
+      (function(day){
+        var dt = new Date(state.year, state.month, day);
+        var past = dt < today;
+        var isPickup = PICKUP_DAYS.indexOf(dt.getDay()) !== -1;
+        var unavailable = past || !isPickup;
+        var selected = state.date && state.date.getTime() === dt.getTime();
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'sp-day';
+        btn.textContent = day;
+        btn.setAttribute('data-state', selected ? 'selected' : (unavailable ? 'off' : 'available'));
+        if(!unavailable){
+          btn.addEventListener('click', function(){
+            state.date = dt; state.slot = null; render();
+          });
+        }
+        grid.appendChild(btn);
+      })(d);
+    }
+
+    var slots = root.querySelector('[data-slots]');
+    if(state.date){
+      slots.classList.add('is-open');
+      root.querySelector('[data-slot-date]').textContent = state.date.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'});
+      var list = root.querySelector('[data-slot-list]');
+      list.innerHTML = '';
+      TIME_SLOTS.forEach(function(s){
+        var b = document.createElement('button');
+        b.type='button'; b.className='sp-slot' + (state.slot===s ? ' is-selected' : '');
+        b.textContent = s;
+        b.addEventListener('click', function(){ state.slot = s; render(); });
+        list.appendChild(b);
+      });
+      var confirm = root.querySelector('[data-confirm]');
+      confirm.classList.toggle('is-ready', !!state.slot);
+    } else {
+      slots.classList.remove('is-open');
+    }
+  }
+
+  root.querySelector('[data-confirm]').addEventListener('click', function(){
+    if(!state.date || !state.slot || !state.type) return;
+    var btn = root.querySelector('[data-confirm]');
+    var err = root.querySelector('[data-err]');
+    err.classList.remove('is-on'); err.textContent = '';
+
+    var dateStr = state.date.toLocaleDateString(undefined,{weekday:'long', year:'numeric', month:'long', day:'numeric'});
+    var props = {
+      'Booking Type': state.type.title,
+      'Pickup Date': dateStr,
+      'Pickup Window': state.slot
+    };
+
+    // No product attached → fallback to old query-string redirect
+    if(!state.type.variantId){
+      var url = CHECKOUT_URL + (CHECKOUT_URL.indexOf('?')>-1?'&':'?')
+        + 'type=' + encodeURIComponent(state.type.id)
+        + '&date=' + encodeURIComponent(state.date.toISOString())
+        + '&slot=' + encodeURIComponent(state.slot);
+      window.location.href = url;
+      return;
+    }
+
+    btn.disabled = true;
+    var originalLabel = btn.textContent;
+    btn.textContent = 'Adding…';
+
+    // Clear cart first so each booking is a fresh order (optional, prevents duplicate plans)
+    fetch('/cart/clear.js', { method: 'POST' })
+      .then(function(){
+        var body = {
+          items: [{
+            id: parseInt(state.type.variantId, 10),
+            quantity: 1,
+            properties: props
+          }],
+          attributes: props
+        };
+        if(state.type.sellingPlan){
+          body.items[0].selling_plan = parseInt(state.type.sellingPlan, 10);
+        }
+        return fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(body)
+        });
+      })
+      .then(function(r){
+        if(!r.ok) return r.json().then(function(j){ throw new Error(j.description || j.message || 'Could not add to cart'); });
+        // Persist attributes on cart too (so they show on the order)
+        return fetch('/cart/update.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ attributes: props })
+        });
+      })
+      .then(function(){
+        window.location.href = CHECKOUT_URL && CHECKOUT_URL !== '/cart' ? CHECKOUT_URL : '/checkout';
+      })
+      .catch(function(e){
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+        err.textContent = e.message || 'Something went wrong. Please try again.';
+        err.classList.add('is-on');
+      });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Schedule Pickup",
+  "tag": "section",
+  "class": "section-schedule-pickup",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Book your pickup." },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Pick a day, pick a window. We'll be there." },
+
+    { "type": "header", "content": "Step 1 — Booking type" },
+    { "type": "text", "id": "step1_eyebrow", "label": "Eyebrow", "default": "Step 1 of 2" },
+    { "type": "text", "id": "step1_title", "label": "Title", "default": "How would you like to book?" },
+    { "type": "text", "id": "step1_sub", "label": "Subtitle", "default": "One pickup, or recurring weekly service?" },
+
+    { "type": "header", "content": "Step 2 — Details panel" },
+    { "type": "text", "id": "back_label", "label": "Back link", "default": "Change booking type" },
+    { "type": "text", "id": "meta_days", "label": "Meta — days", "default": "Mon · Wed · Fri" },
+    { "type": "text", "id": "meta_windows", "label": "Meta — windows", "default": "2 windows/day" },
+    { "type": "textarea", "id": "default_bullets", "label": "Default bullets (| separated)", "default": "Window A: 8:00am – 11:00am|Window B: 4:00pm – 7:00pm|$2.50/lb · 20 lb minimum|Text updates at every step" },
+
+    { "type": "header", "content": "Calendar" },
+    { "type": "text", "id": "calendar_title", "label": "Calendar title", "default": "Select a Date & Time" },
+    { "type": "text", "id": "pickup_weekdays", "label": "Pickup weekdays (0=Sun … 6=Sat, comma separated)", "default": "1,3,5", "info": "Days available for pickup" },
+    { "type": "textarea", "id": "time_slots", "label": "Time windows (| separated)", "default": "8:00am – 11:00am|4:00pm – 7:00pm" },
+    { "type": "text", "id": "confirm_label", "label": "Confirm button", "default": "Continue to Payment →" },
+    { "type": "url", "id": "checkout_url", "label": "Checkout URL" },
+
+    { "type": "header", "content": "Style" },
+    { "type": "select", "id": "font_family", "label": "Font", "default": "Inter",
+      "options": [
+        {"value":"Inter","label":"Inter"},
+        {"value":"system-ui","label":"System"},
+        {"value":"Georgia","label":"Georgia"},
+        {"value":"Helvetica","label":"Helvetica"}
+      ]
+    },
+    { "type": "range", "id": "card_radius", "label": "Card radius", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 16 },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "color_bg", "label": "Background", "default": "#0a0a0a" },
+    { "type": "color", "id": "color_fg", "label": "Text", "default": "#ffffff" },
+    { "type": "color", "id": "color_muted", "label": "Muted text", "default": "#9ca3af" },
+    { "type": "color", "id": "color_card", "label": "Card background", "default": "#111111" },
+    { "type": "color", "id": "color_border", "label": "Border", "default": "#27272a" },
+    { "type": "color", "id": "color_primary", "label": "Primary", "default": "#3b82f6" },
+    { "type": "color", "id": "color_primary_fg", "label": "Primary text", "default": "#ffffff" }
+  ],
+  "blocks": [
+    {
+      "type": "option",
+      "name": "Booking option",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Single Pickup" },
+        { "type": "text", "id": "tag", "label": "Tag (top right)", "default": "One-time" },
+        { "type": "text", "id": "icon", "label": "Icon character", "default": "1" },
+        { "type": "textarea", "id": "description", "label": "Card description", "default": "Perfect for that one mountain of laundry. Pay per bag, no commitment." },
+        { "type": "text", "id": "cta", "label": "CTA text", "default": "Book once" },
+        { "type": "checkbox", "id": "featured", "label": "Featured style", "default": false },
+        { "type": "text", "id": "badge", "label": "Badge (e.g. Most popular)" },
+        { "type": "header", "content": "Linked product (adds to cart)" },
+        { "type": "product", "id": "product", "label": "Product", "info": "First available variant is added to cart on confirm." },
+        { "type": "text", "id": "selling_plan_id", "label": "Selling plan ID (optional)", "info": "For subscription products. Find ID in Shopify Subscriptions." },
+        { "type": "header", "content": "Step 2 details (when selected)" },
+        { "type": "textarea", "id": "detail_desc", "label": "Detail description", "default": "We run pickups on Mondays, Wednesdays, and Fridays. Pick a 3-hour window — leave your bag at the door, we handle the rest." },
+        { "type": "textarea", "id": "bullets", "label": "Bullets (| separated, leave empty to use defaults)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Schedule Pickup",
+      "blocks": [
+        {
+          "type": "option",
+          "settings": {
+            "title": "Single Pickup",
+            "tag": "One-time",
+            "icon": "1",
+            "description": "Perfect for that one mountain of laundry. Pay per bag, no commitment.",
+            "cta": "Book once",
+            "detail_desc": "We run pickups on Mondays, Wednesdays, and Fridays. Pick a 3-hour window — leave your bag at the door, we handle the rest."
+          }
+        },
+        {
+          "type": "option",
+          "settings": {
+            "title": "Weekly Subscription",
+            "tag": "Weekly",
+            "icon": "∞",
+            "description": "Recurring weekly pickup on the day you choose. Save money, never think about laundry.",
+            "cta": "Subscribe",
+            "featured": true,
+            "badge": "Most popular",
+            "detail_desc": "Choose the day and window for your recurring weekly pickup. We'll come at the same time every week — pause or cancel anytime."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

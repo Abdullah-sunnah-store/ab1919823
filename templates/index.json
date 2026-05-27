@@ -1,0 +1,210 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_620484542813176419": {
+      "type": "gp-section-620484542813176419",
+      "settings": {
+        "section_preload": "true",
+        "checksum": "641d5106de27b452f6b5e33d77a3874611986e151a1b1ff52e556de8a5bd684e_1_1_1_0__1",
+        "ggy5ujOVuQt_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0771/3872/2974/files/hero-laundry-DFSqUF3j.jpg",
+        "ggZtlkVzbCi_text": "Laundry day is<br><span style=\"color:#1F80FF;\">finally over.</span>",
+        "gg9T-8ECybw_text": "<p>We pick up, wash, and fold. Starting at $45.<br>Cancel or pause your subscription anytime.</p>",
+        "gggy6-cXfSE_label": "Get started"
+      }
+    },
+    "gp_section_620440932319232999": {
+      "type": "gp-section-620440932319232999",
+      "settings": {
+        "section_preload": "false",
+        "checksum": "89ced583b30059d30fb2d79bab495c3d70c2c6e48e7a5d43a2d7881344383a15_1_1_1_0__1",
+        "ggjxii4i5c8_text": "Based in Salisbury — picking up within 25 miles.",
+        "gggSCg3Rzh7_text": "<p>If you're inside the blue circle, we'll be at your door. Free pickup &amp; delivery across Maryland's Eastern Shore and lower Delaware.</p>",
+        "gg7rM8Oue5T_text": "Towns we cover",
+        "ggu0zI5meic_childItem_0": "<p>Salisbury</p>",
+        "ggu0zI5meic_childItem_1": "<p>Salisbury</p>",
+        "ggu0zI5meic_childItem_2": "<p>Salisbury</p>",
+        "ggu0zI5meic_childItem_3": "<p>Delmar</p>",
+        "ggu0zI5meic_childItem_4": "<p>Delmar</p>",
+        "ggu0zI5meic_childItem_5": "<p>Delmar</p>",
+        "gg4Vz3DA6n-_childItem_0": "<p>Salisbury</p>",
+        "gg4Vz3DA6n-_childItem_1": "<p>Salisbury</p>",
+        "gg4Vz3DA6n-_childItem_2": "<p>Salisbury</p>",
+        "gg4Vz3DA6n-_childItem_3": "<p>Delmar</p>",
+        "gg4Vz3DA6n-_childItem_4": "<p>Delmar</p>",
+        "gg4Vz3DA6n-_childItem_5": "<p>Delmar</p>",
+        "ggQMfqRWOwy_text": "<p><span style=\"background-color:oklch(0.1800);color:oklab(0.700/0.7);\">Not sure if you're in range? Enter your address at checkout — we'll confirm before you're charged.</span></p>"
+      }
+    },
+    "gp_section_620449023903400935": {
+      "type": "gp-section-620449023903400935",
+      "settings": {
+        "section_preload": "false",
+        "checksum": "a444eccf3b89d913d83537d181973002d453eb3bb0b1aa1264627716ae025149_1_1_1_0__1",
+        "ggusZIPKl0O_text": "How it works",
+        "ggqXJAi9Eek_text": "<p>Three steps. Zero folding.</p>",
+        "ggDCePV6kqU_text": "<p>01</p>",
+        "ggU8e09GMJ-_text": "Schedule",
+        "ggGcwjSGByF_text": "<p>Pick a 2-hour window that fits your week. We send confirmation by text.</p>",
+        "ggCnkyES9nx_text": "<p>02</p>",
+        "gg7ze3yaWO9_text": "We Pick Up",
+        "ggeG6Oc-3um_text": "<p>A courier arrives at your door. Hand off your bag — that's it.</p>",
+        "ggX_3kADUpA_text": "<p>03</p>",
+        "ggs4Sqk3UXn_text": "Folded &amp; Returned",
+        "ggiWmxIUz9V_text": "<p>Washed, dried, folded, and back at your door within 24 hours.</p>"
+      }
+    },
+    "gp_section_620468871282819743": {
+      "type": "gp-section-620468871282819743",
+      "settings": {
+        "section_preload": "false",
+        "checksum": "6abcc848cd61a970fdbbbdbbcb59e17c766385b67076efdbaac28415ff3fd490_1_1_1_0__1",
+        "gglJBRt3mBA_text": "Choose your laundry cycle",
+        "ggA_3CrOztA_text": "<p><span style=\"background-color:oklch(000);color:oklch(0.700);\">Flexible plans for every lifestyle. No hidden fees.</span></p>",
+        "gg4nupVOpyc_text": "The Quick Fold",
+        "ggNg-hxhqmR_text": "<p>Perfect for that one-off mountain of laundry.</p>",
+        "ggN_D3RO4O8_text": "$45<span style=\"color:#CECECE;\"><sub>/bag</sub></span>",
+        "gguUnyikzUN_childItem_0": "<p>Next-day delivery</p>",
+        "gguUnyikzUN_childItem_1": "<p>Premium detergents</p>",
+        "gguUnyikzUN_childItem_2": "<p>Text alerts at every step</p>",
+        "gg74GRnebpq_label": "<p>Schedule Once</p>",
+        "gg4TWzX11oA_text": "Weekly Ritual",
+        "ggSDx_gJwAt_text": "<p>Our most popular plan for families and pros.</p>",
+        "gg9dN525zqz_text": "$140<span style=\"color:#CECECE;\"><sub>/month</sub></span>",
+        "ggdYUjMPDhu_childItem_0": "<p><span style=\"color:#1F80FF;\"><strong>4 bags per month</strong></span></p>",
+        "ggdYUjMPDhu_childItem_1": "<p>Free reusable bags</p>",
+        "ggdYUjMPDhu_childItem_2": "<p>Priority pickup window</p>",
+        "ggdYUjMPDhu_childItem_3": "<p>Delicate care included</p>",
+        "ggCdMvyezS0_label": "<p>Schedule Once</p>",
+        "ggEzCtWPo-N_text": "Concierge",
+        "gg0e7wZ9fxo_text": "<p>Unlimited bags and garment steaming.</p>",
+        "gg9mxYW3WUS_text": "$280<span style=\"color:#CECECE;\"><sub>/month</sub></span>",
+        "ggrLAL0GUmI_childItem_0": "<p>Unlimited volume</p>",
+        "ggrLAL0GUmI_childItem_1": "<p>Same-day available</p>",
+        "ggrLAL0GUmI_childItem_2": "<p>Steam &amp; press service</p>",
+        "ggrLAL0GUmI_childItem_3": "<p>Dedicated courier</p>",
+        "ggIAy5Bho0e_label": "<p>Schedule Once</p>"
+      }
+    },
+    "gp_section_620471795937444810": {
+      "type": "gp-section-620471795937444810",
+      "disabled": true,
+      "settings": {
+        "section_preload": "false",
+        "checksum": "ae8cd1847a6019aa993e10ff7cc28e7b9018fb26b77da87eff18c8a13b234f54_1_1_1_0__1",
+        "ggYjoYo1RZ__text": "Book a one-time pickup",
+        "ggyZk9mwOwE_text": "<p><span style=\"background-color:oklab(0.1800/0.3);color:oklch(0.700);\">No subscription. No commitment.</span></p>",
+        "ggCOaho2YwN_text": "How would you like to book?",
+        "ggzaypodgH8_text": "<p><span style=\"background-color:oklab(0.1800/0.3);color:oklch(0.700);\">One pickup, or recurring weekly service?</span></p>",
+        "ggULHv3w060_text": "1",
+        "ggikgjzeIBu_text": "Single Pickup",
+        "ggRWxnWdH-2_text": "<p>Perfect for that one mountain of laundry. Pay per bag, no commitment.</p>",
+        "ggOfigdJ6zX_viewMoreText": "Show more",
+        "ggOfigdJ6zX_viewLessText": "Show less",
+        "ggNFZM3-N0R_label": "Add to cart",
+        "ggNFZM3-N0R_outOfStockLabel": "Out of stock",
+        "ggNFZM3-N0R_unavailableLabel": "Unavailable",
+        "ggNFZM3-N0R_variantSelectionRequiredMessage": "Please select a variant to add product to cart",
+        "ggNFZM3-N0R_successMessage": "Add product to cart successfully",
+        "ggNFZM3-N0R_errorMessage": "Cannot add product to cart",
+        "ggBh1UVo2Xc_label": "<p>Book once →</p>",
+        "gg51HnArvSQ_text": "∞",
+        "gg_mwRDBteI_text": "Subscription",
+        "gg_LAlw-kM__text": "<p>Recurring weekly pickup on the day you choose. Save money, never think about laundry.</p>",
+        "gglCMYcFIZ0_viewMoreText": "Show more",
+        "gglCMYcFIZ0_viewLessText": "Show less",
+        "gg4TENqGIlc_label": "Add to cart",
+        "gg4TENqGIlc_outOfStockLabel": "Out of stock",
+        "gg4TENqGIlc_unavailableLabel": "Unavailable",
+        "gg4TENqGIlc_variantSelectionRequiredMessage": "Please select a variant to add product to cart",
+        "gg4TENqGIlc_successMessage": "Add product to cart successfully",
+        "gg4TENqGIlc_errorMessage": "Cannot add product to cart",
+        "gg0z96GTf77_label": "<p>Subscribe →</p>"
+      }
+    },
+    "book_pickup_LbrjNT": {
+      "type": "book-pickup",
+      "blocks": {
+        "option_PdaXCJ": {
+          "type": "option",
+          "settings": {
+            "title": "Single Pickup",
+            "tag": "One-time",
+            "icon": "1",
+            "description": "Perfect for that one mountain of laundry. Pay per bag, no commitment.",
+            "cta": "Book once",
+            "featured": false,
+            "badge": "Most popular",
+            "product": "laundry-cycle",
+            "selling_plan_id": "",
+            "detail_desc": "We run pickups on Mondays, Wednesdays, and Fridays. Pick a 3-hour window — leave your bag at the door, we handle the rest.",
+            "bullets": ""
+          }
+        },
+        "option_PrzXf3": {
+          "type": "option",
+          "settings": {
+            "title": "Subscription",
+            "tag": "Weekly",
+            "icon": "∞",
+            "description": "Recurring weekly pickup on the day you choose. Save money, never think about laundry.",
+            "cta": "Subscribe",
+            "featured": true,
+            "badge": "Most popular",
+            "product": "laundry-cycle",
+            "selling_plan_id": "",
+            "detail_desc": "We run pickups on Mondays, Wednesdays, and Fridays. Pick a 3-hour window — leave your bag at the door, we handle the rest.",
+            "bullets": ""
+          }
+        }
+      },
+      "block_order": [
+        "option_PdaXCJ",
+        "option_PrzXf3"
+      ],
+      "name": "Book Pickup",
+      "settings": {
+        "heading": "Book a one-time pickup",
+        "subheading": "No subscription. No commitment.",
+        "step1_eyebrow": "Step 1 of 2",
+        "step1_title": "How would you like to book?",
+        "step1_sub": "One pickup, or recurring weekly service?",
+        "back_label": "Change booking type",
+        "meta_days": "Mon · Wed · Fri",
+        "meta_windows": "2 windows/day",
+        "default_bullets": "Window A: 8:00am – 11:00am|Window B: 4:00pm – 7:00pm|$2.50/lb · 20 lb minimum|Text updates at every step",
+        "calendar_title": "Select a Date & Time",
+        "pickup_weekdays": "1,3,5",
+        "time_slots": "8:00am – 11:00am|4:00pm – 7:00pm",
+        "confirm_label": "Continue to Payment →",
+        "checkout_url": "",
+        "font_family": "'Inter', system-ui, sans-serif",
+        "card_radius": 12,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "color_bg": "#0a0a0a",
+        "color_fg": "#ffffff",
+        "color_muted": "#9ca3af",
+        "color_card": "#111111",
+        "color_border": "#27272a",
+        "color_primary": "#3b82f6",
+        "color_primary_fg": "#ffffff"
+      }
+    }
+  },
+  "order": [
+    "gp_section_620484542813176419",
+    "gp_section_620440932319232999",
+    "gp_section_620449023903400935",
+    "gp_section_620468871282819743",
+    "gp_section_620471795937444810",
+    "book_pickup_LbrjNT"
+  ]
+}
