@@ -114,9 +114,11 @@
   #sp-{{ uid }} [data-step="2"]{ display:none; }
   #sp-{{ uid }}[data-active="2"] [data-step="1"]{ display:none; }
   #sp-{{ uid }}[data-active="2"] [data-step="2"]{ display:block; }
+  #sp-{{ uid }} .sp-anchor{ position: relative; top: -80px; display:block; height:0; width:0; overflow:hidden; }
 </style>
 
 <section id="sp-{{ uid }}" data-active="1">
+  <a id="schedule" class="sp-anchor" aria-hidden="true" tabindex="-1"></a>
   <div class="sp-wrap">
     {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
       <div class="sp-head">
@@ -323,21 +325,21 @@
       'Pickup Window': state.slot
     };
 
-    // No product attached → fallback to old query-string redirect
-    if(!state.type.variantId){
-      var url = CHECKOUT_URL + (CHECKOUT_URL.indexOf('?')>-1?'&':'?')
-        + 'type=' + encodeURIComponent(state.type.id)
-        + '&date=' + encodeURIComponent(state.date.toISOString())
-        + '&slot=' + encodeURIComponent(state.slot);
-      window.location.href = url;
-      return;
-    }
+    var destination = (CHECKOUT_URL && CHECKOUT_URL !== '/cart') ? CHECKOUT_URL : '/checkout';
 
     btn.disabled = true;
     var originalLabel = btn.textContent;
-    btn.textContent = 'Adding…';
+    btn.textContent = 'Redirecting…';
 
-    // Clear cart first so each booking is a fresh order (optional, prevents duplicate plans)
+    function goCheckout(){ window.location.href = destination; }
+
+    // No product attached → just go straight to checkout
+    if(!state.type.variantId){
+      goCheckout();
+      return;
+    }
+
+    // Best-effort cart add, then navigate to checkout regardless of cart-add outcome
     fetch('/cart/clear.js', { method: 'POST' })
       .then(function(){
         var body = {
@@ -357,24 +359,14 @@
           body: JSON.stringify(body)
         });
       })
-      .then(function(r){
-        if(!r.ok) return r.json().then(function(j){ throw new Error(j.description || j.message || 'Could not add to cart'); });
-        // Persist attributes on cart too (so they show on the order)
+      .then(function(){
         return fetch('/cart/update.js', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
           body: JSON.stringify({ attributes: props })
         });
       })
-      .then(function(){
-        window.location.href = CHECKOUT_URL && CHECKOUT_URL !== '/cart' ? CHECKOUT_URL : '/checkout';
-      })
-      .catch(function(e){
-        btn.disabled = false;
-        btn.textContent = originalLabel;
-        err.textContent = e.message || 'Something went wrong. Please try again.';
-        err.classList.add('is-on');
-      });
+      .then(goCheckout, goCheckout);
   });
 })();
 </script>
