@@ -325,45 +325,44 @@
     };
 
     btn.disabled = true;
-    var originalLabel = btn.textContent;
     btn.textContent = 'Redirecting…';
 
-    function goCheckout(){ window.location.href = '/checkout'; }
+    // Failsafe: if nothing has navigated within 3s, force-go to /checkout
+    setTimeout(function(){ window.location.href = '/checkout'; }, 3000);
 
     // No product attached → just go straight to checkout
     if(!state.type.variantId){
-      goCheckout();
+      window.location.href = '/checkout';
       return;
     }
 
-    // Best-effort cart add, then navigate to checkout regardless of cart-add outcome
-    fetch('/cart/clear.js', { method: 'POST' })
-      .then(function(){
-        var body = {
-          items: [{
-            id: parseInt(state.type.variantId, 10),
-            quantity: 1,
-            properties: props
-          }],
-          attributes: props
-        };
-        if(state.type.sellingPlan){
-          body.items[0].selling_plan = parseInt(state.type.sellingPlan, 10);
-        }
-        return fetch('/cart/add.js', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify(body)
-        });
-      })
-      .then(function(){
-        return fetch('/cart/update.js', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ attributes: props })
-        });
-      })
-      .then(goCheckout, goCheckout);
+    // Reliable Shopify pattern: standard form POST to /cart/add with return_to=/checkout.
+    // This adds the variant AND redirects to checkout in a single round-trip — no empty-cart bounce.
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/cart/add';
+    form.style.display = 'none';
+
+    function addInput(name, value){
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    }
+
+    addInput('id', state.type.variantId);
+    addInput('quantity', '1');
+    if(state.type.sellingPlan){
+      addInput('selling_plan', state.type.sellingPlan);
+    }
+    Object.keys(props).forEach(function(k){
+      addInput('properties[' + k + ']', props[k]);
+    });
+    addInput('return_to', '/checkout');
+
+    document.body.appendChild(form);
+    form.submit();
   });
 })();
 </script>
