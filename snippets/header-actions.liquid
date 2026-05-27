@@ -63,6 +63,16 @@
   {% endif %}
   {{- block.shopify_attributes -}}
 >
+  {%- if section.settings.show_schedule_cta and section.settings.schedule_cta_text != blank -%}
+    <a
+      href="{{ section.settings.schedule_cta_url | default: '#' }}"
+      class="header-actions__schedule-cta"
+      data-testid="header-schedule-cta"
+    >
+      {{ section.settings.schedule_cta_text }}
+    </a>
+  {%- endif -%}
+
   {% if shop.customer_accounts_enabled %}
     {% liquid
       assign account_actions_style = ''
@@ -257,16 +267,6 @@
     role="status"
     data-testid="cart-count-live-region"
   ></span>
-
-  {%- if section.settings.show_schedule_cta and section.settings.schedule_cta_text != blank -%}
-    <a
-      href="{{ section.settings.schedule_cta_url | default: '#' }}"
-      class="header-actions__schedule-cta"
-      data-testid="header-schedule-cta"
-    >
-      {{ section.settings.schedule_cta_text }}
-    </a>
-  {%- endif -%}
 </header-actions>
 
 <script
@@ -734,7 +734,9 @@
     line-height: 1.2;
     text-decoration: none;
     white-space: nowrap;
+    order: -1;
     margin-inline-start: var(--gap-md, 0.75rem);
+    margin-inline-end: var(--gap-md, 0.75rem);
     transition: background-color var(--animation-speed) var(--animation-easing),
       opacity var(--animation-speed) var(--animation-easing),
       transform var(--animation-speed) var(--animation-easing);
